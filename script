@@ -1,0 +1,52 @@
+const breeds=[
+["Labrador Retriever","₹8,000 – ₹50,000","Friendly, great for families"],
+["Golden Retriever","₹20,000 – ₹60,000","Intelligent, gentle companion"],
+["German Shepherd","₹20,000 – ₹75,000","Loyal, protective guard dog"],
+["Beagle","₹15,000 – ₹40,000","Active, compact size"],
+["Shih Tzu","₹20,000 – ₹45,000","Great for apartments"],
+["Pomeranian / Indian Spitz","₹5,000 – ₹25,000","Small, energetic"],
+["Siberian Husky","₹40,000 – ₹1,00,000","Requires cooler climate / high care"],
+["Indian Pariah Dog (Indie)","Free – ₹3,000","Resilient, low maintenance"]
+];
+const pets=[
+["Bruno","85 Days","Gentle, playful and affectionate."],
+["Milo","1 Year","Curious, social and wonderfully calm."],
+["Coco","120 Days","Bright, cuddly and full of character."],
+["Luna","2 Years","Loyal, gentle and people-loving."]
+];
+document.getElementById("breedGrid").innerHTML=breeds.map((b,i)=>`
+<article class="breed-card"><div class="card-image">Dog portrait ${i+1}</div><div class="card-content">
+<div class="eyebrow">BREED ${String(i+1).padStart(2,"0")}</div><h4>${b[0]}</h4><div class="price">${b[1]}</div><p>${b[2]}</p>
+<div class="card-actions"><button class="small-btn" onclick="toast('Details for ${b[0]} coming soon.')">View Details</button><button class="small-btn dark" onclick="toast('Enquiry started for ${b[0]}.')">Enquire Now</button></div></div></article>`).join("");
+document.getElementById("petGrid").innerHTML=pets.map((p,i)=>`
+<article class="pet-card"><div class="card-image">Companion ${i+1}</div><div class="card-content"><h4>${p[0]}</h4><div class="card-meta"><span>${p[1]}</span><span>Companion</span></div><p>${p[2]}</p><span class="status">● Available for Adoption</span><div class="card-actions"><button class="small-btn" onclick="toast('Opening ${p[0]} details.')">View Details</button><button class="small-btn dark" onclick="toast('Adoption request started for ${p[0]}.')">Adopt</button></div></div></article>`).join("");
+const faqs=[
+["What is the adoption process?","Start by browsing available companions, open their details, and submit an adoption request. Our team can then guide you through the next steps."],
+["How do I enquire about a puppy?","Choose a breed on the Buy page and select Enquire Now. You can also contact Cosmosis directly."],
+["What breeds are available?","Our listed breeds include Labrador Retriever, Golden Retriever, German Shepherd, Beagle, Shih Tzu, Pomeranian / Indian Spitz, Siberian Husky and Indian Pariah Dog (Indie)."],
+["How are puppy prices determined?","Prices vary by breed and individual circumstances. The listed ranges are shown transparently on each breed card."],
+["Can I visit the pet shop?","Visit availability and location details can be confirmed directly with Cosmosis."],
+["How do I know which breed is right for me?","Consider your living space, activity level, time, climate and care needs. Cosmosis AI can help you compare basic characteristics."],
+["Do you provide guidance after purchase?","Cosmosis is designed around thoughtful guidance and a warm experience throughout your companion journey."],
+["Can I contact Cosmosis before deciding?","Absolutely. Call +91 99526 37576 or use the contact form."]
+];
+document.getElementById("faqList").innerHTML=faqs.map((f,i)=>`<div class="faq-item ${i===0?"open":""}"><button class="faq-question">${f[0]}<span>+</span></button><div class="faq-answer">${f[1]}</div></div>`).join("");
+document.querySelectorAll(".faq-question").forEach(btn=>btn.addEventListener("click",()=>btn.parentElement.classList.toggle("open")));
+const modal=document.getElementById("authModal");
+function openAuth(){modal.classList.add("open")}
+["authOpen","authOpen2","authOpen3"].forEach(id=>document.getElementById(id)?.addEventListener("click",openAuth));
+document.getElementById("authClose").addEventListener("click",()=>modal.classList.remove("open"));
+modal.addEventListener("click",e=>{if(e.target===modal)modal.classList.remove("open")});
+function switchTab(tab){document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));document.getElementById("loginForm").classList.toggle("hidden",tab!=="login");document.getElementById("signupForm").classList.toggle("hidden",tab!=="signup");}
+document.querySelectorAll(".tabs button,[data-switch]").forEach(b=>b.addEventListener("click",()=>switchTab(b.dataset.tab||b.dataset.switch)));
+document.getElementById("loginForm").addEventListener("submit",e=>{e.preventDefault();modal.classList.remove("open");toast("Welcome back to Cosmosis.");});
+document.getElementById("signupForm").addEventListener("submit",e=>{e.preventDefault();modal.classList.remove("open");toast("Account created successfully.");});
+document.getElementById("contactForm").addEventListener("submit",e=>{e.preventDefault();document.getElementById("formMessage").textContent="Thank you — your message has been received. We'll be in touch.";e.target.reset()});
+const mobileNav=document.getElementById("mobileNav");document.getElementById("menuBtn").addEventListener("click",()=>mobileNav.classList.toggle("open"));mobileNav.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>mobileNav.classList.remove("open")));
+const chat=document.getElementById("chatPanel");document.getElementById("aiLauncher").addEventListener("click",()=>chat.classList.toggle("open"));document.getElementById("chatClose").addEventListener("click",()=>chat.classList.remove("open"));
+function addChat(text,who){const el=document.createElement("div");el.className=who+"-msg";el.textContent=text;document.getElementById("chatBody").appendChild(el);document.getElementById("chatBody").scrollTop=99999}
+function answer(q){addChat(q,"user");let a="I can help with breeds, prices, adoption and navigating Cosmosis. Try asking about a breed or the adoption process.";if(q==="Puppy Prices")a="Labrador starts at ₹8,000; Golden Retriever ₹20,000; German Shepherd ₹20,000. See the Buy section for all exact ranges.";if(q==="Find a Breed")a="Tell me your space, activity level and preferred size, and I can help you compare the listed breeds.";if(q==="Adoption Help")a="Visit Adopt, filter the companions, choose View Details, then select Adopt to start a request.";setTimeout(()=>addChat(a,"bot"),250)}
+document.querySelectorAll(".quick-actions button").forEach(b=>b.addEventListener("click",()=>answer(b.dataset.q)));
+document.getElementById("chatForm").addEventListener("submit",e=>{e.preventDefault();const v=document.getElementById("chatInput").value.trim();if(v){answer(v);document.getElementById("chatInput").value=""}});
+function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2400)}
+window.toast=toast;
